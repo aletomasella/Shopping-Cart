@@ -16,8 +16,6 @@ type StoreItemProps = {
 const StoreItem = ({ id, title, image, price }: StoreItemProps) => {
   const [quantity, setQuantity] = useState(1);
   const {
-    openCart,
-    closeCart,
     getItemQuantity,
     increaseItemQuantity,
     decreaseItemQuantity,

@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react";
+import ShoppingCart from "../components/ShoppingCart";
 
 type CardItem = {
   id: number;
@@ -12,10 +13,13 @@ type ShoppingCartProiderProps = {
 type ShoppingCartContextProps = {
   openCart: () => void;
   closeCart: () => void;
+  cartQuantity: number;
   getItemQuantity: (id: number) => number;
   increaseItemQuantity: (id: number) => void;
   decreaseItemQuantity: (id: number) => void;
   removeFromCart: (id: number) => void;
+  cartItems: CardItem[];
+  isOpen: boolean;
 };
 
 const ShoppingCartContext = createContext({} as ShoppingCartContextProps);
@@ -31,6 +35,11 @@ export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
 
+  const cartQuantity = cartItems.reduce(
+    (totalQuantity, item) => totalQuantity + item.quantity,
+    0
+  );
+
   const getItemQuantity = (id: number) => {
     return cartItems.find((item) => item.id === id)?.quantity || 0;
   };
@@ -42,7 +51,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
       } else {
         return currenItems.map((item) => {
           if (item.id === id) {
-            return { ...item, quantity: item.quantity++ };
+            return { ...item, quantity: item.quantity + 1 };
           } else {
             return item;
           }
@@ -58,7 +67,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
       } else {
         return currenItems.map((item) => {
           if (item.id === id) {
-            return { ...item, quantity: item.quantity-- };
+            return { ...item, quantity: item.quantity - 1 };
           } else {
             return item;
           }
@@ -82,9 +91,13 @@ export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
         increaseItemQuantity,
         decreaseItemQuantity,
         removeFromCart,
+        cartItems,
+        cartQuantity,
+        isOpen,
       }}
     >
       {children}
+      <ShoppingCart />
     </ShoppingCartContext.Provider>
   );
 }
