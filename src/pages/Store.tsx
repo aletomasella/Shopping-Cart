@@ -1,14 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import StoreItem from "../components/StoreItem";
+import { useShoppingCart } from "../context/ShoppingCartContext";
 
 const Store = () => {
   const [storeItems, setStoreItems] = useState([]);
 
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
+    fetch("https://api.escuelajs.co/api/v1/products")
       .then((response) => response.json())
-      .then((data) => setStoreItems(data))
+      .then((data) =>
+        data.map(
+          (item: {
+            id: number;
+            title: string;
+            price: number;
+            category: { name: string };
+            images: [string];
+          }) => {
+            return {
+              id: item.id,
+              title: item.title,
+              price: item.price,
+              category: item.category.name,
+              image: item.images[0],
+            };
+          }
+        )
+      )
+      .then((dataFilter) => setStoreItems(dataFilter))
       .catch((err) => console.error(err))
       .finally(() => console.log(storeItems));
   }, []);
