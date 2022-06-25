@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
+import Loading from "../components/Loading";
 import StoreItem from "../components/StoreItem";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 
 const Store = () => {
   const [storeItems, setStoreItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("https://api.escuelajs.co/api/v1/products")
@@ -29,23 +31,29 @@ const Store = () => {
         )
       )
       .then((dataFilter) => setStoreItems(dataFilter))
-      .catch((err) => console.error(err));
-    // .finally(() => console.log(storeItems));
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
     <>
-      <h1>Store</h1>
-      <Row md={2} xs={1} lg={3} className="g-3">
-        {storeItems &&
-          storeItems.map((item: any) => {
-            return (
-              <Col key={item.id}>
-                <StoreItem {...item} />
-              </Col>
-            );
-          })}
-      </Row>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div>
+          <h1>Store</h1>
+          <Row md={2} xs={1} lg={3} className="g-3">
+            {storeItems &&
+              storeItems.map((item: any) => {
+                return (
+                  <Col key={item.id}>
+                    <StoreItem {...item} />
+                  </Col>
+                );
+              })}
+          </Row>
+        </div>
+      )}
     </>
   );
 };
