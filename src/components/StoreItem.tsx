@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 import { formatCurrency } from "../utilities/formatCurrency";
@@ -14,13 +14,14 @@ type StoreItemProps = {
 };
 
 const StoreItem = ({ id, title, image, price }: StoreItemProps) => {
-  const [quantity, setQuantity] = useState(1);
   const {
     getItemQuantity,
     increaseItemQuantity,
     decreaseItemQuantity,
     removeFromCart,
   } = useShoppingCart();
+
+  let quantity = getItemQuantity(id);
 
   return (
     <>
@@ -39,7 +40,12 @@ const StoreItem = ({ id, title, image, price }: StoreItemProps) => {
           </Card.Title>
           <div className="mt-auto">
             {quantity === 0 ? (
-              <Button className="w-100">+ Add to Cart</Button>
+              <Button
+                className="w-100"
+                onClick={() => increaseItemQuantity(id, price)}
+              >
+                + Add to Cart
+              </Button>
             ) : (
               <div
                 className="d-flex align-items-center flex-column"
@@ -49,11 +55,21 @@ const StoreItem = ({ id, title, image, price }: StoreItemProps) => {
                   className="d-flex align-items-center justify-content-center"
                   style={{ gap: ".5rem" }}
                 >
-                  <Button onClick={() => decreaseItemQuantity(id)}>-</Button>
+                  <Button
+                    onClick={() => decreaseItemQuantity(id)}
+                    style={{ width: "40px", height: "40px" }}
+                  >
+                    -
+                  </Button>
                   <div>
                     <span className="fs-3">{quantity}</span>
                   </div>
-                  <Button onClick={() => increaseItemQuantity(id)}>+</Button>
+                  <Button
+                    onClick={() => increaseItemQuantity(id, price)}
+                    style={{ width: "40px", height: "40px" }}
+                  >
+                    +
+                  </Button>
                 </div>
                 <Button
                   onClick={() => removeFromCart(id)}

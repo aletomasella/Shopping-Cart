@@ -29,8 +29,8 @@ const Store = () => {
         )
       )
       .then((dataFilter) => setStoreItems(dataFilter))
-      .catch((err) => console.error(err))
-      .finally(() => console.log(storeItems));
+      .catch((err) => console.error(err));
+    // .finally(() => console.log(storeItems));
   }, []);
 
   return (

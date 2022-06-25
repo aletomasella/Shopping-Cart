@@ -1,9 +1,11 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import ShoppingCart from "../components/ShoppingCart";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 type CardItem = {
   id: number;
   quantity: number;
+  price: number;
 };
 
 type ShoppingCartProiderProps = {
@@ -15,7 +17,7 @@ type ShoppingCartContextProps = {
   closeCart: () => void;
   cartQuantity: number;
   getItemQuantity: (id: number) => number;
-  increaseItemQuantity: (id: number) => void;
+  increaseItemQuantity: (id: number, price: number) => void;
   decreaseItemQuantity: (id: number) => void;
   removeFromCart: (id: number) => void;
   cartItems: CardItem[];
@@ -29,7 +31,10 @@ export function useShoppingCart() {
 }
 
 export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
-  const [cartItems, setCartItems] = useState<CardItem[]>([]);
+  const [cartItems, setCartItems] = useLocalStorage<CardItem[]>(
+    "cartItems",
+    []
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const openCart = () => setIsOpen(true);
@@ -44,10 +49,10 @@ export function ShoppingCartProvider({ children }: ShoppingCartProiderProps) {
     return cartItems.find((item) => item.id === id)?.quantity || 0;
   };
 
-  const increaseItemQuantity = (id: number) => {
+  const increaseItemQuantity = (id: number, price: number) => {
     setCartItems((currenItems) => {
       if (currenItems.find((item) => item.id === id) == null) {
-        return [...currenItems, { id, quantity: 1 }];
+        return [...currenItems, { id, price, quantity: 1 }];
       } else {
         return currenItems.map((item) => {
           if (item.id === id) {
